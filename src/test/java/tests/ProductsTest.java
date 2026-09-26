@@ -1,0 +1,51 @@
+package tests;
+
+import base.BaseTest;
+import org.openqa.selenium.Cookie;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import pages.ProductsPage;
+
+public class ProductsTest extends BaseTest {
+    private ProductsPage productsPage;
+    @BeforeMethod
+    public void loginWithCookie() {
+        driver.manage().addCookie(new Cookie("session-username", "standard_user"));
+        driver.get("https://www.saucedemo.com/inventory.html");
+        productsPage = new ProductsPage(driver);
+    }
+
+    @Test
+    public void validHeader(){
+        String header=productsPage.getHeaderText();
+        Assert.assertEquals(header,"Products");
+    }
+
+    @Test
+    public void addSingleProductToCart(){
+        productsPage.addProductToCart("Sauce Labs Backpack");
+        int numberOfItems=productsPage.getCartBadgeCount();
+        Assert.assertEquals(numberOfItems,1);
+    }
+
+    @Test
+    public void addProductsToCart(){
+        productsPage.addProductToCart("Sauce Labs Backpack");
+        productsPage.addProductToCart("Sauce Labs Bike Light");
+        productsPage.addProductToCart("Sauce Labs Onesie");
+        Assert.assertEquals(productsPage.getCartBadgeCount(),3);
+    }
+
+    @Test
+    public void emptyCartHasNoBadge(){
+        Assert.assertFalse(productsPage.isCartBadgeDisplayed());
+    }
+
+    @Test
+    public void removeProductFromCart(){
+        productsPage.addProductToCart("Sauce Labs Backpack");
+        productsPage.removeProductFromCart("Sauce Labs Backpack");
+        Assert.assertFalse(productsPage.isCartBadgeDisplayed());
+    }
+}
