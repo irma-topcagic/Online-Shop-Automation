@@ -62,8 +62,9 @@ public class ProductsPage {
         return !driver.findElements(cartBadge).isEmpty();
     }
 
-    public void openCart() {
+    public CartPage openCart() {
         driver.findElement(cartIcon).click();
+        return new CartPage(driver);
     }
 
     public void removeProductFromCart(String productName){
